@@ -1,14 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TextInput,
-  Button,
-  TouchableOpacity,
-} from "react-native";
+import { Text, View, TextInput, TouchableOpacity } from "react-native";
 import styles from "./login.styles";
 
 const Login = () => {
@@ -39,7 +31,9 @@ const Login = () => {
         <Text style={styles.forgot_button}>Forgot Password?</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.loginBtn}>
-        <Text>LOGIN</Text>
+        <Text>
+          LOGIN {email} {password}
+        </Text>
       </TouchableOpacity>
     </View>
   );
