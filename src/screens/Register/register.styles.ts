@@ -1,0 +1,64 @@
+import { StyleSheet } from "react-native";
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#dacce9",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  title: {
+    color: "#4e1786",
+    fontSize: 35,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  subtitle: {
+    color: "#4e1786",
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 10,
+    marginBottom: 40,
+    textAlign: "center",
+    fontStyle: "italic",
+    marginRight: 5,
+    marginLeft: 5,
+  },
+  inputView: {
+    backgroundColor: "#8b46d4",
+    borderRadius: 20,
+    color: "#fff",
+    width: "70%",
+    height: 50,
+    marginTop: 20,
+    alignItems: "center",
+  },
+  registerBtn: {
+    width: "80%",
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 30,
+    backgroundColor: "#4e1786",
+    borderRadius: 20,
+  },
+  textClass: {
+    height: 50,
+    textAlign: "center",
+  },
+  textBtn: {
+    color: "#fff",
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  errorText: {
+    color: "#e53333",
+    fontSize: 15,
+    fontWeight: "bold",
+    textAlign: "center",
+    fontStyle: "italic",
+    marginBottom: 10,
+    marginTop: 0,
+  },
+});
+export default styles;
