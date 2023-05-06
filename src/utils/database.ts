@@ -16,12 +16,12 @@ export const createTablesInDB = () => {
 };
 
 // retrive user from database based on email
-export const getUserByEmailFromDB = (email: string): Promise<User> => {
+export const getUserByEmailFromDB = (emailCheck: string): Promise<User> => {
   return new Promise((resolve, reject) => {
     db.transaction((transaction) => {
       transaction.executeSql(
         `SELECT * FROM users WHERE email = ?`,
-        [email],
+        [emailCheck],
         (_, result) => {
           if (result.rows.length > 0) {
             const { id, email, password } = result.rows.item(0);

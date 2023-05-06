@@ -23,6 +23,9 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     marginRight: 5,
     marginLeft: 5,
+    textDecorationLine: "underline",
+    textDecorationColor: "#4e1786",
+    textDecorationStyle: "solid",
   },
   inputView: {
     backgroundColor: "#8b46d4",

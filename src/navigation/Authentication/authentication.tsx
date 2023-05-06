@@ -1,45 +1,38 @@
-import React from "react";
 import Login from "../../screens/Login/login";
 import Register from "../../screens/Register/register";
-import { Text } from "react-native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Ionicons } from "@expo/vector-icons";
-import styles from "./authentication.styles";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React, { useEffect, useState } from "react";
+import { RootStackParamList } from "../navigator.types";
+import Home from "../../screens/Home/home";
+import { getUserLogin } from "../../utils/async.storage";
 
-const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export const Authentication = () => {
+  const [initialRouteName, setInitialRouteName] =
+    useState<keyof RootStackParamList>("Login");
+  const [isLoaded, setLoaded] = React.useState(false);
+
+  useEffect(() => {
+    checkUserLogged();
+  }, []);
+
+  const checkUserLogged = async () => {
+    const loggedUserEmail = await getUserLogin();
+    setInitialRouteName(loggedUserEmail !== null ? "Home" : "Login");
+    setLoaded(true);
+  };
+
+  if (!isLoaded) return null;
+
   return (
-    <Tab.Navigator
-      screenOptions={() => ({
-        tabBarActiveTintColor: "tomato",
-        tabBarInactiveTintColor: "gray",
-      })}
+    <Stack.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName={initialRouteName}
     >
-      <Tab.Screen
-        name="Login"
-        component={Login}
-        options={{
-          tabBarLabel: () => {
-            return <Text style={styles.tabText}>LOGIN</Text>;
-          },
-          tabBarIcon: () => (
-            <Ionicons name="person-outline" size={28} color="#7277cc" />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Register"
-        component={Register}
-        options={{
-          tabBarLabel: () => {
-            return <Text style={styles.tabText}>REGISTER</Text>;
-          },
-          tabBarIcon: () => (
-            <Ionicons name="person-add-outline" size={28} color="#7277cc" />
-          ),
-        }}
-      />
-    </Tab.Navigator>
+      <Stack.Screen name="Login" component={Login} />
+      <Stack.Screen name="Register" component={Register} />
+      <Stack.Screen name="Home" component={Home} />
+    </Stack.Navigator>
   );
 };

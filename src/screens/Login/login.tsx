@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Text, View, TextInput, TouchableOpacity } from "react-native";
+import { Text, View, TextInput, Pressable } from "react-native";
 import styles from "./login.styles";
 import { getUserByEmailFromDB } from "../../utils/database";
 import { useToast } from "react-native-toast-notifications";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/navigator.types";
+import { storeUserLogin } from "../../utils/async.storage";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -19,12 +20,12 @@ const Login = () => {
   const handleUserLogin = async () => {
     try {
       const user = await getUserByEmailFromDB(email);
-      console.log(user);
       if (user.email !== "" && user.password !== "") {
         if (user.password === password) {
           toast.show("User login succesfull!");
           console.log("Log user ", user);
           setValidLogin(true);
+          storeUserLogin(email);
           navigation.navigate("Home");
         }
       } else {
@@ -36,16 +37,22 @@ const Login = () => {
     }
   };
 
+  const goToRegister = () => {
+    navigation.navigate("Register");
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome back to DOPTI!</Text>
-      <Text style={styles.subtitle}>Sign in to be able to adopt animals</Text>
+      <Text style={styles.title}>Welcome back to Appetify!</Text>
+      <Text style={styles.subtitle} onPress={goToRegister}>
+        Don't have an account? Create one here!
+      </Text>
       <View style={styles.inputView}>
         <TextInput
           style={styles.textClass}
           placeholder="Enter your email..."
           placeholderTextColor="#dddddd"
-          onChangeText={(email) => setEmail(email)}
+          onChangeText={(emailChange) => setEmail(emailChange)}
         />
       </View>
       <View style={styles.inputView}>
@@ -54,15 +61,15 @@ const Login = () => {
           placeholder="Enter your password..."
           placeholderTextColor="#dddddd"
           secureTextEntry={true}
-          onChangeText={(password) => setPassword(password)}
+          onChangeText={(passwordChange) => setPassword(passwordChange)}
         />
       </View>
       {!validLogin && <Text style={styles.errorText}>{errorLogin}</Text>}
-      <TouchableOpacity style={styles.registerBtn}>
+      <Pressable style={styles.registerBtn}>
         <Text style={styles.textBtn} onPress={handleUserLogin}>
           LOGIN
         </Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 };

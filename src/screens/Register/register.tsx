@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Text, View, TextInput, TouchableOpacity } from "react-native";
+import { Text, View, TextInput, Pressable } from "react-native";
 import styles from "./register.styles";
 import {
-  deleteTablesInDB,
+  //deleteTablesInDB,
   getUserByEmailFromDB,
   insertUserInDB,
 } from "../../utils/database";
@@ -10,6 +10,7 @@ import { useToast } from "react-native-toast-notifications";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/navigator.types";
+import { storeUserLogin } from "../../utils/async.storage";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -17,8 +18,13 @@ const Register = () => {
   const toast = useToast();
   const [validEmail, setValidEmail] = useState(true);
   const [validPassword, setValidPassword] = useState(true);
+  const [validRegister, setValidRegister] = useState(true);
+
   const errorEmail = "The entered email is not valid";
   const errorPassword = "The password needs to be at least 5 characters long";
+  const errorRegister =
+    "An account with this email already exist. Try to login";
+
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
@@ -26,12 +32,17 @@ const Register = () => {
     console.log(email, password);
     try {
       if (validateEmailAndPassword()) {
-        await insertUserInDB(email, password);
-        toast.show("Register Succesfull!");
         const user = await getUserByEmailFromDB(email);
-        console.log("Registered user ", user);
-        navigation.navigate("Home");
-        //deleteTablesInDB(); // clean database
+        if (user.email === "" && user.password === "") {
+          setValidRegister(true);
+          await insertUserInDB(email, password);
+          toast.show("Register Succesfull!");
+          storeUserLogin(email);
+          navigation.navigate("Home");
+          //deleteTablesInDB(); // clean database
+        } else {
+          setValidRegister(false);
+        }
       }
     } catch (error) {
       console.log("Error on register ", error);
@@ -57,18 +68,22 @@ const Register = () => {
     return isValid;
   };
 
+  const goToLogin = () => {
+    navigation.navigate("Login");
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome to DOPTI!</Text>
-      <Text style={styles.subtitle}>
-        Create an account to be able to adopt animals
+      <Text style={styles.title}>Welcome to Appetify!</Text>
+      <Text style={styles.subtitle} onPress={goToLogin}>
+        Already have an account? Login here!
       </Text>
       <View style={styles.inputView}>
         <TextInput
           style={styles.textClass}
           placeholder="Enter your email..."
           placeholderTextColor="#dddddd"
-          onChangeText={(email) => setEmail(email)}
+          onChangeText={(emailChange) => setEmail(emailChange)}
         />
       </View>
       {!validEmail && <Text style={styles.errorText}>{errorEmail}</Text>}
@@ -78,15 +93,16 @@ const Register = () => {
           placeholder="Enter your password..."
           placeholderTextColor="#dddddd"
           secureTextEntry={true}
-          onChangeText={(password) => setPassword(password)}
+          onChangeText={(passwordChange) => setPassword(passwordChange)}
         />
       </View>
       {!validPassword && <Text style={styles.errorText}>{errorPassword}</Text>}
-      <TouchableOpacity style={styles.registerBtn}>
+      {!validRegister && <Text style={styles.errorText}>{errorRegister}</Text>}
+      <Pressable style={styles.registerBtn}>
         <Text style={styles.textBtn} onPress={handleUserRegister}>
           REGISTER
         </Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 };
