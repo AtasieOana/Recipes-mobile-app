@@ -70,7 +70,9 @@ const Home = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Meals ideas</Text>
-      <Text onPress={onSignOutUser}>Sign out</Text>
+      <Text style={styles.signOut} onPress={onSignOutUser}>
+        Sign out
+      </Text>
       {loading ? (
         <Text>Wait a second till data is loaded...</Text>
       ) : (

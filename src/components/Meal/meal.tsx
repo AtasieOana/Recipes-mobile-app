@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./meal.styles";
 import {
   Card,
@@ -17,6 +17,10 @@ import {
 } from "../../utils/favorites.service";
 import { useDispatch } from "react-redux";
 import { addFavorite, deleteFavorite } from "../../redux/favorite.action";
+import { Share } from "react-native";
+import { useToast } from "react-native-toast-notifications";
+import { Animated, Text } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 interface MealProps {
   meal?: Meal;
@@ -27,6 +31,9 @@ const MealComponent = ({ meal, parent }: MealProps) => {
   let imageUri = meal?.mealImage;
   const [isFavorite, setIsFavorite] = React.useState(false);
   const [isChecking, setIsChecking] = React.useState(false);
+  const [animation] = useState(new Animated.Value(0));
+
+  const toast = useToast();
 
   const dispatch = useDispatch();
 
@@ -44,6 +51,34 @@ const MealComponent = ({ meal, parent }: MealProps) => {
     }
   };
 
+  const animateAddDeleteButton = () => {
+    // the button is getting bigger
+    Animated.timing(animation, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      // it returns to the initial position of the button
+      Animated.timing(animation, {
+        toValue: 0,
+        duration: 300,
+        delay: 600,
+        useNativeDriver: true,
+      }).start();
+    });
+  };
+
+  const animatedStyles = {
+    transform: [
+      {
+        scale: animation.interpolate({
+          inputRange: [0, 1], // the animation appears when the value changes from 0 to 1
+          outputRange: [1, 1.2], // scale will increase from 1 to 1.3
+        }),
+      },
+    ],
+  };
+
   const addToFavorites = async () => {
     const loggedUserEmail = await getUserLogin();
     const addToFavoritesBool = await addFavoriteReceipeInDatabase(
@@ -53,6 +88,7 @@ const MealComponent = ({ meal, parent }: MealProps) => {
     if (addToFavoritesBool) {
       setIsFavorite(true);
       dispatch(addFavorite(meal));
+      animateAddDeleteButton();
     }
   };
 
@@ -78,6 +114,17 @@ const MealComponent = ({ meal, parent }: MealProps) => {
     );
     setIsFavorite(!deletedFavorite);
     dispatch(deleteFavorite(meal?.mealId));
+    animateAddDeleteButton();
+  };
+
+  const shareReceipe = async () => {
+    try {
+      await Share.share({
+        message: `Check this receipe \n Name: ${meal?.mealName}\n Category: ${meal?.mealCategory} \n Steps: ${meal?.preparingInstructions}`,
+      });
+    } catch (error: any) {
+      toast.show("The receipe failed to be shared!");
+    }
   };
 
   return (
@@ -110,9 +157,16 @@ const MealComponent = ({ meal, parent }: MealProps) => {
       </Card.Content>
       <Card.Actions>
         {parent !== "favorites" && (
-          <Button onPress={handleButtonPress} disabled={isChecking}>
-            {isFavorite ? "Delete from Favourites" : "Add To Favourites"}
-          </Button>
+          <Animated.View style={[styles.button, animatedStyles]}>
+            <TouchableOpacity onPress={handleButtonPress} disabled={isChecking}>
+              <Text style={styles.textButton}>
+                {isFavorite ? "Delete from Favourites" : "Add To Favourites"}
+              </Text>
+            </TouchableOpacity>
+          </Animated.View>
+        )}
+        {parent === "favorites" && (
+          <Button onPress={shareReceipe}>Share this receipe</Button>
         )}
       </Card.Actions>
     </Card>

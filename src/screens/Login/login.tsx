@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Text, View, TextInput } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Text, View, TextInput, Animated } from "react-native";
 import styles from "./login.styles";
 import { useToast } from "react-native-toast-notifications";
 import { useNavigation } from "@react-navigation/native";
@@ -15,10 +15,14 @@ const Login = () => {
   const toast = useToast();
   const [validLogin, setValidLogin] = useState(true);
   const errorLogin = "The inserted information is not valid";
+  const [animation] = useState(new Animated.Value(0));
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
+  useEffect(() => {}, []);
+
   const handleUserLogin = async () => {
+    animateReverseText();
     try {
       await signInUserWithEmailAndPassword(email, password);
       toast.show("User login succesfull!");
@@ -36,9 +40,40 @@ const Login = () => {
     navigation.navigate("Register");
   };
 
+  const animateReverseText = () => {
+    // the text is rotated
+    Animated.timing(animation, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start(() => {
+      // the text came back
+      Animated.timing(animation, {
+        toValue: 0,
+        duration: 500,
+        delay: 1000,
+        useNativeDriver: true,
+      }).start();
+    });
+  };
+
+  const animatedStyles = {
+    transform: [
+      {
+        rotate: animation.interpolate({
+          inputRange: [0, 1],
+          outputRange: ["0deg", "180deg"],
+        }),
+      },
+    ],
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome back to Appetify!</Text>
+      <Animated.View style={[styles.titleAnim, animatedStyles]}>
+        <Text style={styles.title}>Welcome back to Appetify!</Text>
+      </Animated.View>
+
       <Text style={styles.subtitle} onPress={goToRegister}>
         Don't have an account? Create one here!
       </Text>

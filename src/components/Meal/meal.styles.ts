@@ -23,5 +23,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: "justify",
   },
+  button: {
+    width: "50%",
+    height: 30,
+    backgroundColor: "#c3ccfa",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 20,
+  },
+  textButton: {
+    color: "#000000",
+    fontWeight: "bold",
+    fontSize: 14,
+  },
 });
 export default styles;

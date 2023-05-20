@@ -9,6 +9,9 @@ const styles = StyleSheet.create({
     paddingTop: 30,
   },
   title: {
+    backgroundColor: "#dacce9",
+  },
+  textTitle: {
     color: "#0d2b4e",
     fontSize: 28,
     fontWeight: "bold",

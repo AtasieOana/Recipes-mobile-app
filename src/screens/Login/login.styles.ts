@@ -7,6 +7,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  titleAnim: {
+    backgroundColor: "#dacce9",
+  },
   title: {
     color: "#4e1786",
     fontSize: 32,

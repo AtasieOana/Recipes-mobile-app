@@ -18,5 +18,13 @@ const styles = StyleSheet.create({
     textDecorationStyle: "solid",
     margin: 10,
   },
+  signOut: {
+    marginBottom: 10,
+    textDecorationLine: "underline",
+    textDecorationStyle: "dotted",
+    textDecorationColor: "#3b0c42",
+    color: "#3b0c42",
+    fontSize: 20,
+  },
 });
 export default styles;
