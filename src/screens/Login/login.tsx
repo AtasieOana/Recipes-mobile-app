@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { Text, View, TextInput, Pressable } from "react-native";
+import { Text, View, TextInput } from "react-native";
 import styles from "./login.styles";
-import { getUserByEmailFromDB } from "../../utils/database";
 import { useToast } from "react-native-toast-notifications";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/navigator.types";
 import { storeUserLogin } from "../../utils/async.storage";
+import { signInUserWithEmailAndPassword } from "../../utils/login.service";
+import { Button } from "react-native-paper";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -19,21 +20,15 @@ const Login = () => {
 
   const handleUserLogin = async () => {
     try {
-      const user = await getUserByEmailFromDB(email);
-      if (user.email !== "" && user.password !== "") {
-        if (user.password === password) {
-          toast.show("User login succesfull!");
-          console.log("Log user ", user);
-          setValidLogin(true);
-          storeUserLogin(email);
-          navigation.navigate("Home");
-        }
-      } else {
-        setValidLogin(false);
-      }
+      await signInUserWithEmailAndPassword(email, password);
+      toast.show("User login succesfull!");
+      setValidLogin(true);
+      storeUserLogin(email);
+      navigation.navigate("Sidebar");
     } catch (error) {
       console.log("Log user error ", error);
       toast.show("User login failed!");
+      setValidLogin(false);
     }
   };
 
@@ -65,11 +60,9 @@ const Login = () => {
         />
       </View>
       {!validLogin && <Text style={styles.errorText}>{errorLogin}</Text>}
-      <Pressable style={styles.registerBtn}>
-        <Text style={styles.textBtn} onPress={handleUserLogin}>
-          LOGIN
-        </Text>
-      </Pressable>
+      <Button style={styles.registerBtn} onPress={handleUserLogin}>
+        <Text style={styles.textBtn}>LOGIN</Text>
+      </Button>
     </View>
   );
 };

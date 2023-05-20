@@ -1,6 +1,7 @@
 {
   "extends": ["@react-native-community", "prettier"],
   "rules": {
-    "react-hooks/exhaustive-deps": 0
+    "react-hooks/exhaustive-deps": 0,
+    "react/no-unstable-nested-components": ["error", { "allowAsProps": true }]
   }
 }

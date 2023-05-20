@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   },
   textBtn: {
     color: "#fff",
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
   },
   errorText: {

@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { RootStackParamList } from "../navigator.types";
 import Home from "../../screens/Home/home";
 import { getUserLogin } from "../../utils/async.storage";
+import { Sidebar } from "../Sidebar/sidebar";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -19,7 +20,7 @@ export const Authentication = () => {
 
   const checkUserLogged = async () => {
     const loggedUserEmail = await getUserLogin();
-    setInitialRouteName(loggedUserEmail !== null ? "Home" : "Login");
+    setInitialRouteName(loggedUserEmail !== null ? "Sidebar" : "Login");
     setLoaded(true);
   };
 
@@ -30,6 +31,7 @@ export const Authentication = () => {
       screenOptions={{ headerShown: false }}
       initialRouteName={initialRouteName}
     >
+      <Stack.Screen name="Sidebar" component={Sidebar} />
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Register" component={Register} />
       <Stack.Screen name="Home" component={Home} />

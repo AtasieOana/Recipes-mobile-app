@@ -1,16 +1,15 @@
 import React, { useState } from "react";
-import { Text, View, TextInput, Pressable } from "react-native";
+import { Text, View, TextInput } from "react-native";
 import styles from "./register.styles";
-import {
-  //deleteTablesInDB,
-  getUserByEmailFromDB,
-  insertUserInDB,
-} from "../../utils/database";
 import { useToast } from "react-native-toast-notifications";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/navigator.types";
 import { storeUserLogin } from "../../utils/async.storage";
+import { signUpWithEmailAndPasswordAndSaveUserData } from "../../utils/login.service";
+import { collection, doc, setDoc } from "firebase/firestore";
+import { db } from "../../utils/firebase";
+import { Button } from "react-native-paper";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -30,23 +29,30 @@ const Register = () => {
 
   const handleUserRegister = async () => {
     console.log(email, password);
-    try {
-      if (validateEmailAndPassword()) {
-        const user = await getUserByEmailFromDB(email);
-        if (user.email === "" && user.password === "") {
+    if (validateEmailAndPassword()) {
+      try {
+        const userCredential = await signUpWithEmailAndPasswordAndSaveUserData(
+          email,
+          password
+        );
+        if (!userCredential) {
+          // User with this email already exists
+          setValidRegister(false);
+          toast.show("Register Failed, try again!");
+        } else {
           setValidRegister(true);
-          await insertUserInDB(email, password);
+          const user = userCredential.user;
+          const userData = { email: user.email, uid: user.uid };
+          const userDocRef = doc(collection(db, "users"), user.uid);
+          await setDoc(userDocRef, userData);
           toast.show("Register Succesfull!");
           storeUserLogin(email);
-          navigation.navigate("Home");
-          //deleteTablesInDB(); // clean database
-        } else {
-          setValidRegister(false);
+          navigation.navigate("Sidebar");
         }
+      } catch (error) {
+        console.log("Error on register ", error);
+        toast.show("Register Failed, try again!");
       }
-    } catch (error) {
-      console.log("Error on register ", error);
-      toast.show("Register Failed, try again!");
     }
   };
 
@@ -98,11 +104,9 @@ const Register = () => {
       </View>
       {!validPassword && <Text style={styles.errorText}>{errorPassword}</Text>}
       {!validRegister && <Text style={styles.errorText}>{errorRegister}</Text>}
-      <Pressable style={styles.registerBtn}>
-        <Text style={styles.textBtn} onPress={handleUserRegister}>
-          REGISTER
-        </Text>
-      </Pressable>
+      <Button style={styles.registerBtn} onPress={handleUserRegister}>
+        <Text style={styles.textBtn}>REGISTER</Text>
+      </Button>
     </View>
   );
 };

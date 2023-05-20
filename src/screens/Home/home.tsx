@@ -24,7 +24,7 @@ const Home = () => {
       .then((data) => convertMealsJsonToModelObjects(data.meals))
       .catch((error) => console.error(error))
       .finally(() => setLoading(false));
-  }, [convertMealsJsonToModelObjects]);
+  }, []);
 
   const convertMealsJsonToModelObjects = (mealsJson: any) => {
     let newMeals: Meal[] = [];

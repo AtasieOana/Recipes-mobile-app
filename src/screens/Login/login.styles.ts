@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
   registerBtn: {
     width: "80%",
-    height: 50,
+    height: 55,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 30,
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   },
   textBtn: {
     color: "#fff",
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
   },
   errorText: {
