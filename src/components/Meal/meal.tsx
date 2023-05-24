@@ -73,7 +73,7 @@ const MealComponent = ({ meal, parent }: MealProps) => {
       {
         scale: animation.interpolate({
           inputRange: [0, 1], // the animation appears when the value changes from 0 to 1
-          outputRange: [1, 1.2], // scale will increase from 1 to 1.3
+          outputRange: [1, 1.2], // scale will increase from 1 to 1.2
         }),
       },
     ],

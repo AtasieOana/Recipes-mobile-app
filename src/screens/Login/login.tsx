@@ -19,8 +19,6 @@ const Login = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-  useEffect(() => {}, []);
-
   const handleUserLogin = async () => {
     animateReverseText();
     try {
