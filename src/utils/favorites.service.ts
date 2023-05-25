@@ -1,4 +1,13 @@
-import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  deleteDoc,
+  query,
+  collection,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "./firebase";
 
 // add favorite receipe in database
@@ -40,4 +49,19 @@ export const deleteFavoriteReceiveForUser = async (
 ) => {
   await deleteDoc(doc(db, "favorites", emailUser + idReceipe));
   return true;
+};
+
+// get all favorites
+export const getAllFavoritesForUser = async (emailUser: any) => {
+  const q = query(
+    collection(db, "favorites"),
+    where("emailUser", "==", emailUser)
+  );
+  const querySnapshot = await getDocs(q);
+
+  let favorites = <any>[];
+  querySnapshot.forEach((doc) => {
+    favorites.push(doc.data().idReceipe);
+  });
+  return favorites;
 };

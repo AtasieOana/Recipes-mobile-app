@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Text } from "react-native";
 import styles from "./home.styles";
 import { useEffect, useState } from "react";
@@ -6,17 +6,19 @@ import { Meal } from "../../models/meal.model";
 import MealComponent from "../../components/Meal/meal";
 import { SafeAreaView } from "react-navigation";
 import { ScrollView } from "react-native-gesture-handler";
-import { signOutUser } from "../../utils/async.storage";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../navigation/navigator.types";
+import { getUserLogin } from "../../utils/async.storage";
+import { getAllFavoritesForUser } from "../../utils/favorites.service";
+import { useDispatch } from "react-redux";
+import { setFavorites } from "../../redux/favorite.action";
+import { ThemeContext } from "../../utils/theme/theme.context";
+import { StyleSheet } from "react-native";
 
 const Home = () => {
   const [meals, setMeals] = useState<Meal[]>([]);
   const [loading, setLoading] = useState(true);
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const url = "https://www.themealdb.com/api/json/v1/1/search.php?f=e";
+  const dispatch = useDispatch();
+  const { theme } = useContext(ThemeContext);
 
   useEffect(() => {
     fetch(url)
@@ -26,12 +28,19 @@ const Home = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  const convertMealsJsonToModelObjects = (mealsJson: any) => {
+  const convertMealsJsonToModelObjects = async (mealsJson: any) => {
     let newMeals: Meal[] = [];
     mealsJson.forEach((meal: any) => {
       const newMeal = convertMealDataToMealObject(meal);
       newMeals.push(newMeal);
     });
+    // check with are favorites
+    const loggedUserEmail = await getUserLogin();
+    const isReceipeUserFavorite = await getAllFavoritesForUser(loggedUserEmail);
+    const userFavs = newMeals.filter((meal: any) =>
+      isReceipeUserFavorite.includes(meal.mealId)
+    );
+    dispatch(setFavorites(userFavs));
     setMeals(newMeals);
   };
 
@@ -62,17 +71,21 @@ const Home = () => {
     );
   };
 
-  const onSignOutUser = () => {
-    signOutUser();
-    navigation.navigate("Login");
-  };
+  const pageStyles = StyleSheet.create({
+    container: {
+      ...styles.container,
+      backgroundColor: theme.backgroundColor,
+    },
+    title: {
+      ...styles.title,
+      color: theme.titleColor,
+      textDecorationColor: theme.titleColor,
+    },
+  });
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Meals ideas</Text>
-      <Text style={styles.signOut} onPress={onSignOutUser}>
-        Sign out
-      </Text>
+    <SafeAreaView style={pageStyles.container}>
+      <Text style={pageStyles.title}>Meals ideas</Text>
       {loading ? (
         <Text>Wait a second till data is loaded...</Text>
       ) : (

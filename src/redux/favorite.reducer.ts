@@ -16,6 +16,11 @@ const favoritesReceipesReducer = (state = initialState, action: any) => {
           (meal: any) => meal.mealId !== action.payload
         ),
       };
+    case "SET_FAVORITES":
+      return {
+        ...state,
+        favoritesReceipes: action.payload,
+      };
     default:
       return state;
   }

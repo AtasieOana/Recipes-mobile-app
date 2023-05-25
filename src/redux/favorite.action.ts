@@ -11,3 +11,10 @@ export const deleteFavorite = (id: any) => {
     payload: id,
   };
 };
+
+export const setFavorites = (data: any) => {
+  return {
+    type: "SET_FAVORITES",
+    payload: data,
+  };
+};

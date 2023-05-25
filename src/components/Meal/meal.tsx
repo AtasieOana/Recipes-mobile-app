@@ -1,13 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styles from "./meal.styles";
-import {
-  Card,
-  Button,
-  Title,
-  Paragraph,
-  Subheading,
-  List,
-} from "react-native-paper";
+import { Card, Title, Paragraph, Subheading, List } from "react-native-paper";
 import { Meal } from "../../models/meal.model";
 import { getUserLogin } from "../../utils/async.storage";
 import {
@@ -21,6 +14,8 @@ import { Share } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { Animated, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { StyleSheet } from "react-native";
+import { ThemeContext } from "../../utils/theme/theme.context";
 
 interface MealProps {
   meal?: Meal;
@@ -34,6 +29,7 @@ const MealComponent = ({ meal, parent }: MealProps) => {
   const [animation] = useState(new Animated.Value(0));
 
   const toast = useToast();
+  const { theme } = useContext(ThemeContext);
 
   const dispatch = useDispatch();
 
@@ -42,6 +38,25 @@ const MealComponent = ({ meal, parent }: MealProps) => {
       checkIfFavorite();
     }
   }, []);
+
+  const pageStyles = StyleSheet.create({
+    title: {
+      ...styles.title,
+      color: theme.textColor,
+    },
+    subheading: {
+      ...styles.subheading,
+      color: theme.textColor,
+    },
+    button: {
+      ...styles.button,
+      backgroundColor: theme.buttonColor,
+    },
+    textButton: {
+      ...styles.textButton,
+      color: theme.textButtonColor,
+    },
+  });
 
   const handleButtonPress = () => {
     if (isFavorite) {
@@ -101,9 +116,6 @@ const MealComponent = ({ meal, parent }: MealProps) => {
     );
     setIsChecking(false);
     setIsFavorite(isReceipeUserFavorite);
-    if (isReceipeUserFavorite) {
-      dispatch(addFavorite(meal));
-    }
   };
 
   const deleteFromFavorites = async () => {
@@ -130,8 +142,8 @@ const MealComponent = ({ meal, parent }: MealProps) => {
   return (
     <Card style={styles.container}>
       <Card.Content>
-        <Title style={styles.title}>{meal?.mealName}</Title>
-        <Subheading style={styles.subheading}>
+        <Title style={pageStyles.title}>{meal?.mealName}</Title>
+        <Subheading style={pageStyles.subheading}>
           From {meal?.mealCategory} category and {meal?.mealArea} area
         </Subheading>
       </Card.Content>
@@ -157,16 +169,20 @@ const MealComponent = ({ meal, parent }: MealProps) => {
       </Card.Content>
       <Card.Actions>
         {parent !== "favorites" && (
-          <Animated.View style={[styles.button, animatedStyles]}>
+          <Animated.View style={[pageStyles.button, animatedStyles]}>
             <TouchableOpacity onPress={handleButtonPress} disabled={isChecking}>
-              <Text style={styles.textButton}>
+              <Text style={pageStyles.textButton}>
                 {isFavorite ? "Delete from Favourites" : "Add To Favourites"}
               </Text>
             </TouchableOpacity>
           </Animated.View>
         )}
         {parent === "favorites" && (
-          <Button onPress={shareReceipe}>Share this receipe</Button>
+          <Animated.View style={[pageStyles.button, animatedStyles]}>
+            <TouchableOpacity onPress={shareReceipe}>
+              <Text style={pageStyles.textButton}>Share this receipe</Text>
+            </TouchableOpacity>
+          </Animated.View>
         )}
       </Card.Actions>
     </Card>
