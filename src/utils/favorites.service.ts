@@ -60,8 +60,8 @@ export const getAllFavoritesForUser = async (emailUser: any) => {
   const querySnapshot = await getDocs(q);
 
   let favorites = <any>[];
-  querySnapshot.forEach((doc) => {
-    favorites.push(doc.data().idReceipe);
+  querySnapshot.forEach((docum) => {
+    favorites.push(docum.data().idReceipe);
   });
   return favorites;
 };

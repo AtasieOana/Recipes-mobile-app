@@ -11,6 +11,7 @@ import { ThemeContext } from "../../utils/theme/theme.context";
 import { themes } from "../../utils/theme/theme";
 import Settings from "../../screens/Settings/settings";
 import { signOutUser } from "../../utils/async.storage";
+import Videos from "../../screens/Videos/videos";
 
 const Drawer = createDrawerNavigator();
 
@@ -48,6 +49,11 @@ export const Sidebar = () => {
         <Drawer.Screen
           name="Favorites"
           component={Favorites}
+          options={{ headerShown: true }}
+        />
+        <Drawer.Screen
+          name="Videos"
+          component={Videos}
           options={{ headerShown: true }}
         />
         <Drawer.Screen

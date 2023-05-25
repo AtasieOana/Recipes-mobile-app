@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Text, View, TextInput, Animated } from "react-native";
 import styles from "./login.styles";
 import { useToast } from "react-native-toast-notifications";
