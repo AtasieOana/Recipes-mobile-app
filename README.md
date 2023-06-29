@@ -1,5 +1,5 @@
 
-# Recipes mobile application app :woman_cook:
+# Recipes mobile application :woman_cook:
 
 **Project developed in React Native with TypeScript**
 
